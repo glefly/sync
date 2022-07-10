@@ -17,7 +17,7 @@ jobs:
           target_dir=${TARGET_REPOSITORY##*/}
           git clone https://github.com/${TARGET_REPOSITORY}.git
           cd "${target_dir}"
-          rm -rf whgle
+          rm -rf whgle v2 tor
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
@@ -27,7 +27,9 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     env:
-       UPSTREAM_REPOSITORY1: ${{ secrets.UPR }}
+       UPSTREAM_REPOSITORY: ${{ secrets.UPR }}
+       UPSTREAM_REPOSITORY1: ${{ secrets.UPR1 }}
+       UPSTREAM_REPOSITORY2: ${{ secrets.UPR2 }}
     needs: clean
     steps:
       - name: clone
@@ -36,8 +38,16 @@ jobs:
           git clone https://github.com/${TARGET_REPOSITORY}.git
           cd "${target_dir}"
           mkdir whgle
-          git clone https://github.com/${UPSTREAM_REPOSITORY1}.git tmp
+          git clone https://github.com/${UPSTREAM_REPOSITORY}.git tmp
           mv tmp/* whgle/
+          rm -rf tmp
+          mkdir v2
+          git clone https://github.com/${UPSTREAM_REPOSITORY1}.git tmp
+          mv tmp/* v2/
+          rm -rf tmp
+          mkdir tor
+          git clone https://github.com/${UPSTREAM_REPOSITORY2}.git tmp
+          mv tmp/* tor/
           rm -rf tmp
           git config user.name github-actions
           git config user.email github-actions@github.com
