@@ -17,7 +17,7 @@ jobs:
           target_dir=${TARGET_REPOSITORY##*/}
           git clone https://github.com/${TARGET_REPOSITORY}.git
           cd "${target_dir}"
-          rm -rf whgle v2 tor
+          rm -rf whgle v2 tro
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
@@ -45,9 +45,9 @@ jobs:
           git clone https://github.com/${UPSTREAM_REPOSITORY1}.git tmp
           mv tmp/* v2/
           rm -rf tmp
-          mkdir tor
+          mkdir tro
           git clone https://github.com/${UPSTREAM_REPOSITORY2}.git tmp
-          mv tmp/* tor/
+          mv tmp/* tro/
           rm -rf tmp
           git config user.name github-actions
           git config user.email github-actions@github.com
