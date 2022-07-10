@@ -56,8 +56,8 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.PAT }}
       UPSTREAM_REPOSITORY: ${{ secrets.UPR2 }}
       TARGET_REPOSITORY: ${{ secrets.TGR2 }}
-      TARGET_BRANCH: master
-      UPSTREAM_BRANCH: master
+      TARGET_BRANCH: main
+      UPSTREAM_BRANCH: main
     steps:
       - name: Sync
         run: |
