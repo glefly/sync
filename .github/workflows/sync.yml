@@ -17,7 +17,7 @@ jobs:
           target_dir=${TARGET_REPOSITORY##*/}
           git clone https://github.com/${TARGET_REPOSITORY}.git
           cd "${target_dir}"
-          rm -rf whgle v2 tro
+          rm -rf whgle v2 tro fly
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
@@ -30,6 +30,7 @@ jobs:
        UPSTREAM_REPOSITORY: ${{ secrets.UPR }}
        UPSTREAM_REPOSITORY1: ${{ secrets.UPR1 }}
        UPSTREAM_REPOSITORY2: ${{ secrets.UPR2 }}
+       UPSTREAM_REPOSITORY3: ${{ secrets.UPR3 }}
     needs: clean
     steps:
       - name: clone
@@ -48,6 +49,10 @@ jobs:
           mkdir tro
           git clone https://github.com/${UPSTREAM_REPOSITORY2}.git tmp
           mv tmp/* tro/
+          rm -rf tmp
+          mkdir fly
+          git clone https://github.com/${UPSTREAM_REPOSITORY3}.git tmp
+          mv tmp/* fly/
           rm -rf tmp
           git config user.name github-actions
           git config user.email github-actions@github.com
