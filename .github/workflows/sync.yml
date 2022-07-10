@@ -3,16 +3,13 @@ name: Sync
 on:
   schedule:
     - cron:  '0 18 * * 4'
-
-    
   workflow_dispatch:  
-
 env:
   GITHUB_TOKEN:  ${{ secrets.PAT }}
   TARGET_REPOSITORY: ${{ secrets.TR }}
-  UPSTREAM_REPOSITORY1: ${{ secrets.UPR }}
+
 jobs:
-  sync:
+  clean:
     runs-on: ubuntu-latest
     steps:
       - name: clone
@@ -20,7 +17,28 @@ jobs:
           target_dir=${TARGET_REPOSITORY##*/}
           git clone https://github.com/${TARGET_REPOSITORY}.git
           cd "${target_dir}"
+          rm -rf whgle
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "$(date "+%Y%m%d-%H%M")"
+          git push https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${TARGET_REPOSITORY}.git --force
+
+  sync:
+    runs-on: ubuntu-latest
+    env:
+       UPSTREAM_REPOSITORY1: ${{ secrets.UPR }}
+    needs: clean
+    steps:
+      - name: clone
+        run: |
+          target_dir=${TARGET_REPOSITORY##*/}
+          git clone https://github.com/${TARGET_REPOSITORY}.git
+          cd "${target_dir}"
           mkdir whgle
+          git clone https://github.com/${UPSTREAM_REPOSITORY1}.git tmp
+          mv tmp/* whgle/
+          rm -rf tmp
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
