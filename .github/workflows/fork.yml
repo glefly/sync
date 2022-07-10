@@ -7,7 +7,7 @@ on:
   workflow_dispatch:  
   
 jobs:
-  fork-sync:
+  start:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.PAT }}
@@ -29,3 +29,42 @@ jobs:
           git commit -m "rm workflows"
           git push --force --follow-tags --tags "${target_repo}" "${UPSTREAM_BRANCH}:${TARGET_BRANCH}"
           rm -rf "../${upstream_dir}"        
+  sync:
+    runs-on: ubuntu-latest
+    needs: start
+    env:
+      GITHUB_TOKEN: ${{ secrets.PAT }}
+      UPSTREAM_REPOSITORY: ${{ secrets.UPR1 }}
+      TARGET_REPOSITORY: ${{ secrets.TGR1 }}
+      TARGET_BRANCH: main
+      UPSTREAM_BRANCH: main
+    steps:
+      - name: Sync
+        run: |
+          upstream_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${UPSTREAM_REPOSITORY}.git"
+          upstream_dir=${UPSTREAM_REPOSITORY##*/}
+          target_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${TARGET_REPOSITORY}.git"
+          git clone "${upstream_repo}" -b "${UPSTREAM_BRANCH}" --single-branch
+          cd "${upstream_dir}"
+          git push --force --follow-tags --tags "${target_repo}" "${UPSTREAM_BRANCH}:${TARGET_BRANCH}"
+          rm -rf "../${upstream_dir}"                
+
+  over:
+    runs-on: ubuntu-latest
+    needs: [start,sync]
+    env:
+      GITHUB_TOKEN: ${{ secrets.PAT }}
+      UPSTREAM_REPOSITORY: ${{ secrets.UPR2 }}
+      TARGET_REPOSITORY: ${{ secrets.TGR2 }}
+      TARGET_BRANCH: master
+      UPSTREAM_BRANCH: master
+    steps:
+      - name: Sync
+        run: |
+          upstream_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${UPSTREAM_REPOSITORY}.git"
+          upstream_dir=${UPSTREAM_REPOSITORY##*/}
+          target_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${TARGET_REPOSITORY}.git"
+          git clone "${upstream_repo}" -b "${UPSTREAM_BRANCH}" --single-branch
+          cd "${upstream_dir}"
+          git push --force --follow-tags --tags "${target_repo}" "${UPSTREAM_BRANCH}:${TARGET_BRANCH}"
+          rm -rf "../${upstream_dir}"  
